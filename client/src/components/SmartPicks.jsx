@@ -1,9 +1,10 @@
 import React, { useContext, useMemo } from "react";
 import { AppContext } from "../context/AppContext";
 import ProductCard from "./ProductCard";
+import ProductSkeleton from "./ProductSkeleton";
 
 const SmartPicks = () => {
-  const { products } = useContext(AppContext);
+  const { products, loading } = useContext(AppContext);
 
   const smartProducts = useMemo(() => {
     if (!products || products.length === 0) return [];
@@ -23,9 +24,14 @@ const SmartPicks = () => {
 
       {/* SAME layout as your Products page */}
      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 ">
-        {smartProducts.map((product) => (
-          <ProductCard key={product._id} product={product} />
-        ))}
+        
+        {loading
+          ? Array(6).fill("").map((_, i) => <ProductSkeleton key={i} />)
+          : smartProducts.map((product) => (
+              <ProductCard key={product._id} product={product} />
+            ))
+        }
+
       </div>
 
     </div>

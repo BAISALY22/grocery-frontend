@@ -20,8 +20,8 @@ const AppContextProvider = ({ children }) => {
   const [showUserLogin, setShowUserLogin] = useState(false);
   const [products, setProducts] = useState([]);
   const [cartItems, setCartItems] = useState({});
-  const [searchQuery, setSearchQuery] = useState({});
-
+  const [searchQuery, setSearchQuery] = useState("");
+const [loading, setLoading] = useState(true);
 
 
   const fetchSeller = async () => {
@@ -55,6 +55,7 @@ const fetchUser = async () => {
   const fetchProducts = async () => {
     // setProducts(dummyProducts);
     try {
+      setLoading(true); 
       const { data } = await axios.get("/api/product/list")
       if(data.success){
         setProducts(data.products)
@@ -65,6 +66,9 @@ const fetchUser = async () => {
       
     } catch (error) {
        toast.error(error.message)
+    }
+    finally {
+    setLoading(false);
     }
   };
 
@@ -99,19 +103,6 @@ const fetchUser = async () => {
     return totalCount;
   };
 
-  // total cart amount
-
-  // const totalCartAmount = () => {
-  //   let totalAmount = 0;
-  //   for (const items in cartItems) {
-  //     let iteminfo = products.find((product) => product._id === items);
-  //     if (cartItems[items] > 0) {
-  //       totalAmount += cartItems[items] * iteminfo.offerPrice;
-  //     }
-  //   }
-  //   return Math.floor(totalAmount * 100) / 100;
-  // };
-
 
 const totalCartAmount = () => {
   let totalAmount = 0;
@@ -141,22 +132,6 @@ const totalCartAmount = () => {
       setCartItems(cartData);
     }
   };
-
-  // useEffect(() => {
-  //   const updateCart = async () => {
-  //     try {
-  //       const { data }= await axios.post("/api/cart/update", { cartItems })
-  //       if(!data.success){
-  //         toast.error(data.message)
-  //       }
-  //     } catch (error) {
-  //       toast.error("Failed to update cart");
-  //     }
-  //   }
-  //   if (user) {
-  //     updateCart();
-  //   }
-  // }, [cartItems]);
 
 
 useEffect(() => {
@@ -205,6 +180,8 @@ useEffect(() => {
     setSearchQuery,
     axios,
     fetchProducts,
+    loading,
+
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
